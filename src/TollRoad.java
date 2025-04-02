@@ -1,8 +1,10 @@
 
 
-// import java.util.Comparator;
-// import java.util.Map;
-// import java.util.TreeMap;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static jdk.tools.jlink.internal.plugins.PluginsResourceBundle.getDescription;
 
 /**
  * Application to demonstrate a TreeMap storing key:value pairs in sorted
@@ -12,6 +14,8 @@
 public class TollRoad {
     // TODO 1: Declare two Map variables to associate String keys with Vehicle objects.
     // TODO 1: One will sort by vehicle description and one will sort by vehicle state.
+    private Map<String, Vehicle> vehicleByDescription;
+    private Map<String, Vehicle> vehicleByState;
 
 
 
@@ -23,6 +27,20 @@ public class TollRoad {
     public TollRoad() {
         // TODO 2: Create the two TreeMap objects, the second of which must be
         // TODO 2: given an appropriate Comparator object when constructed.
+        vehicleByDescription = new TreeMap<>();
+       //Create a Comparator for sorting by vehicle state
+        Comparator<String> stateComparator = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return s1.substring(1).compareTo(s2.substring(1));
+            }
+        };
+        //Creating the second TreeMap with the
+        // comparator to sort by state
+        vehicleByState = new TreeMap<>(stateComparator);
+        //Se crearon 2 treMaps uno para el caracter del tipo de vehiculo y el otro para los caracteres consecutivos
+        // de el estado con el comparator para ordenar por estado
+
 
 
     }
@@ -37,7 +55,18 @@ public class TollRoad {
      */
     public void addToll(String description) {
         // TODO 3: Complete this method as described in the exercise.
-
+        // Update the toll count if the vehicle has already passed through a toll reader,
+        // otherwise create a new Vehicle object and add it to the TreeMaps.
+        Vehicle vehicle = vehicleByDescription.get(description);
+            if (vehicle == null) {// si el vehiculo no exixte creo un nuevo vehiculo y lo adhiero a los dos treeMaps,
+                // uno para el tipo de carro y el otro para el estado con sus dos caracteres consecutivos
+                vehicle = new Vehicle(description);
+                 vehicleByDescription.put(description, vehicle);
+                 vehicleByState.put(description, vehicle);
+            } else {
+                vehicle.addToll();//si el vehiculo ya esta en el TreeMap lo actualizo
+                // en los dos treeMaps y sumo la cantidad de toll a los dos treeMaps
+            }
     }
 
     /**
@@ -46,10 +75,35 @@ public class TollRoad {
      *
      * @return String containing the current vehicles, sorted by description.
      */
-    public String getVehicleReportByDescription() {
+
+    /*public String getVehicleReportByDescription() {
         // TODO 4: Complete this method as described in the exercise.
-        return null;
+        StringBuilder report = new StringBuilder();
+        for (Map.Entry<String, Vehicle> entry : vehicleByDescription.entrySet()) {
+            report.append("Description: ").append(entry.getKey())
+                   .append(", Toll Count: ").append(entry.getValue().getTollCount())
+                   .append("\n");
+        }// Aqui aqui construyo el reporte con los vehiculos ordenados por descripcion
+        return report.toString();*/ // devuelvo el reporte en formato string
+        //explicando este metodo linea por linea que crea el reporte con los vehiculos ordenados por descripcion
+        // en este caso creo el reporte con los vehiculos ordenados por descripcion, cada vehiculo se muestra
+        //      con su descripcion y la cantidad de toll que ha recibido
+        // en este caso lo hago para cada entry del TreeMap, que es cada vehiculo con su descripcion
+        //  y la cantidad de toll que ha recibido
+        //Explicar linea por linea de cosigo este metodo como una estructura de datos
+        // en este caso creo un StringBuilder para poder ir añadiendo los strings
+        // en cada iteracion añado un string que contiene la descripcion del vehiculo y la cantidad de toll que ha recibido
+        // al final devuelvo el StringBuilder como un string, que es el reporte en formato string
+   // }
+    public String getVehicleReportByDescription() {
+        StringBuilder report = new StringBuilder();
+        for (Vehicle vehicle : vehicleByDescription.values()) {
+            report.append(String.format("Description: %s, Toll Count: %d\n",
+                    vehicle.description, vehicle.tollCount));
+        }
+        return report.toString();
     }
+
 
     /**
      * Builds and returns a String containing the current Vehicles
@@ -59,8 +113,21 @@ public class TollRoad {
      */
     public String getVehicleReportByState() {
         // TODO 5: Complete this method as described in the exercise.
-        return null;
+      StringBuilder report = new StringBuilder();
+      for (Vehicle vehicle : vehicleByState.values()) {
+          report.append(String.format("Description: %s, Toll Count: %d\n", vehicle.description, vehicle.tollCount));
+      }
+      return report.toString();
     }
+    //ex
+    // Este metodo es el que muestra el reporte con los vehiculos ordenados por estado
+    // en este caso creo un StringBuilder para poder ir añadiendo los strings
+    // en cada iteracion añado un string que contiene la descripcion del vehiculo y la cantidad de toll que ha recibido
+    // al final devuelvo el StringBuilder como un string, que es el reporte en formato string
+    // A donde estoy iterando en el TreeMap, que es cada vehiculo con su descripcion y la cantidad de toll que ha recibido
+    // Cual es el treeMap y como saca la descripcion y la cantidad de toll de cada vehiculo,
+    // esto es lo que hago para cada entry del TreeMap, que es cada vehiculo con su descripcion y la cantidad de toll que ha recibido
+
 
     /**
      * Main method to demonstrate the Toll Road and Vehicle classes.
